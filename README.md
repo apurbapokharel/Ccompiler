@@ -1,1 +1,1 @@
-First commit in arch, with nvim. 
+Studying the code for scanner in depth.
