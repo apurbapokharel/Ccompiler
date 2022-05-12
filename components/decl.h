@@ -14,7 +14,7 @@ struct ASTnode *mkastunary(int op, struct ASTnode *left, int intvalue);
 int arithop(int tok);
 
 //make an AST tree
-struct ASTnode *binexpr(void);
+struct ASTnode *binexpr(int rbp);
 
 //a semantic analyzer
 int interpretAST(struct ASTnode *n);

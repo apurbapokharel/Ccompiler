@@ -33,22 +33,60 @@ int arithop(int tok){
 	}
 }
 
-// Return a AST tree whose root is a binary operator
-struct ASTnode *binexpr(void){
-	struct ASTnode *n, *left, *right;
-	int nodetype;
+// Operator precedence for each token
+static int OpPrec[] = { 0, 10, 10, 20, 20, 0 };
 
-	left = primary();
-
-	if(Token.token == T_EOF)
-		return (left);
-
-	nodetype = arithop(Token.token);
-
-	scan(&Token);
-
-	right = binexpr();
-
-	n = mkastnode(nodetype, left, right, 0);
-	return (n);
+// Check that we have a binary operator and
+// return its precedence.
+static int op_precedence(int tokentype) {
+  int prec = OpPrec[tokentype];
+  if (prec == 0) {
+    fprintf(stderr, "syntax error on line %d, token %d\n", Line, tokentype);
+    exit(1);
+  }
+  return (prec);
 }
+
+// Return an AST tree whose root is a binary operator.
+// Parameter ptp is the previous token's precedence.
+struct ASTnode *binexpr(int ptp) {
+  struct ASTnode *left, *right;
+  int tokentype;
+
+  // Get the integer literal on the left.
+  // Fetch the next token at the same time.
+  left = primary();
+  printf("value of token is %d and value of ptp is %d\n", Token.token, ptp);
+  // If no tokens left, return just the left node
+  tokentype = Token.token;
+  if (tokentype == T_EOF)
+    return (left);
+
+  // While the precedence of this token is
+  // more than that of the previous token precedence
+  printf("op %d and ptp %d", op_precedence(tokentype), ptp);
+  while (op_precedence(tokentype) > ptp) {
+    // Fetch in the next integer literal
+	printf("operator is %d\n",tokentype );
+    scan(&Token);
+
+    // Recursively call binexpr() with the
+    // precedence of our token to build a sub-tree
+    right = binexpr(OpPrec[tokentype]);
+
+    // Join that sub-tree with ours. Convert the token
+    // into an AST operation at the same time.
+    left = mkastnode(arithop(tokentype), left, right, 0);
+
+    // Update the details of the current token.
+    // If no tokens left, return just the left node
+    tokentype = Token.token;
+    if (tokentype == T_EOF)
+      return (left);
+  }
+
+  // Return the tree we have when the precedence
+  // is the same or lower
+  return (left);
+}
+

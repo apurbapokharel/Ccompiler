@@ -3,3 +3,6 @@ parser: expr.c interp.c main.c scan.c tree.c
 
 clean:
 	rm -f parser *.o
+
+test: parser 
+		-(./parser examples/scanner_test)
