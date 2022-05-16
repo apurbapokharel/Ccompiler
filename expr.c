@@ -52,39 +52,31 @@ static int op_precedence(int tokentype) {
 struct ASTnode *binexpr(int ptp) {
   struct ASTnode *left, *right;
   int tokentype;
-
   // Get the integer literal on the left.
   // Fetch the next token at the same time.
   left = primary();
-  printf("value of token is %d and value of ptp is %d\n", Token.token, ptp);
   // If no tokens left, return just the left node
   tokentype = Token.token;
   if (tokentype == T_EOF)
     return (left);
-
   // While the precedence of this token is
   // more than that of the previous token precedence
-  printf("op %d and ptp %d", op_precedence(tokentype), ptp);
   while (op_precedence(tokentype) > ptp) {
     // Fetch in the next integer literal
-	printf("operator is %d\n",tokentype );
     scan(&Token);
-
     // Recursively call binexpr() with the
     // precedence of our token to build a sub-tree
     right = binexpr(OpPrec[tokentype]);
-
     // Join that sub-tree with ours. Convert the token
     // into an AST operation at the same time.
     left = mkastnode(arithop(tokentype), left, right, 0);
-
     // Update the details of the current token.
     // If no tokens left, return just the left node
     tokentype = Token.token;
-    if (tokentype == T_EOF)
-      return (left);
+	if (tokentype == T_EOF){
+		return (left);
+	}
   }
-
   // Return the tree we have when the precedence
   // is the same or lower
   return (left);

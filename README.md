@@ -6,4 +6,6 @@ Fixed the parser's semantic analyzer. Will now make a AST according to precedenc
 This is done by removing the old way of creating a AST which was basically a recursive scanning without
 taking precdence into account. Pratt parser was implemented to fix this.
 
+I took so long to understand the code behid the creation of the AST tree.
+
 Thank you to DoctorWkt for making a boy's compiler dream come true.
