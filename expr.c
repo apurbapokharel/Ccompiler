@@ -57,7 +57,7 @@ struct ASTnode *binexpr(int ptp) {
   left = primary();
   // If no tokens left, return just the left node
   tokentype = Token.token;
-  if (tokentype == T_EOF)
+  if (tokentype == T_SEMI)
     return (left);
   // While the precedence of this token is
   // more than that of the previous token precedence
@@ -73,7 +73,7 @@ struct ASTnode *binexpr(int ptp) {
     // Update the details of the current token.
     // If no tokens left, return just the left node
     tokentype = Token.token;
-	if (tokentype == T_EOF){
+	if (tokentype == T_SEMI){
 		return (left);
 	}
   }

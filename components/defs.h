@@ -1,19 +1,22 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <stdlib.h> 
+#include <stdio.h> 
+#include <string.h> 
 #include <ctype.h>
 
-// Structure and enum definitions
 
+#define TEXTLEN 512 //length of symbol in input 
+
+// Structure and enum definitions
 // Lexer Tokens
 enum {
-	T_EOF, T_PLUS, T_MINUS, T_STAR, T_SLASH, T_INTLIT
+	T_EOF, T_PLUS, T_MINUS, T_STAR, T_SLASH, T_INTLIT, T_SEMI, T_PRINT
 };
 
-// Lexer Token structure
-struct token {
-  int token;
-  int intvalue;
+// Lexer Token structure 
+
+struct token { 
+	int token; 
+	int intvalue;
 };
 
 // AST Tokens
