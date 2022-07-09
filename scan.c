@@ -65,7 +65,7 @@ static int scanint(int c) {
 
 // Scan an identifier from the input file and
 // store it in buf[]. Return the identifier's length
-static void scanident(int c, char *buf, int lim) {
+static int scanident(int c, char *buf, int lim) {
   int i = 0;
 
   // Allow digits, alpha and underscores
@@ -73,8 +73,7 @@ static void scanident(int c, char *buf, int lim) {
     // Error if we hit the identifier length limit,
     // else append to buf[] and get next character
     if (lim - 1 == i) {
-      printf("identifier too long on line %d\n", Line);
-      exit(1);
+      fatal("Identifier too long");
     } else if (i < lim - 1) {
       buf[i++] = c;
     }
@@ -84,6 +83,7 @@ static void scanident(int c, char *buf, int lim) {
   // NUL-terminate the buf[] and return the length
   putback(c);
   buf[i] = '\0';
+  return (i);
 }
 
 // Given a word from the input, return the matching
@@ -92,9 +92,13 @@ static void scanident(int c, char *buf, int lim) {
 // to waste time strcmp()ing against all the keywords.
 static int keyword(char *s) {
   switch (*s) {
+    case 'i':
+      if (!strcmp(s, "int"))
+        return (T_INT);
+      break;
     case 'p':
       if (!strcmp(s, "print"))
-	return (T_PRINT);
+        return (T_PRINT);
       break;
   }
   return (0);
@@ -129,33 +133,31 @@ int scan(struct token *t) {
     case ';':
       t->token = T_SEMI;
       break;
+    case '=':
+      t->token = T_EQUALS;
+      break;
     default:
-
       // If it's a digit, scan the
       // literal integer value in
-	 if (isdigit(c)) {
-		t->intvalue = scanint(c);
-		t->token = T_INTLIT;
-		break;
-      } 	
-	else if (isalpha(c) || '_' == c) {
-		// Read in a keyword or identifier
-		scanident(c, Text, TEXTLEN);
-
-		// If it's a recognised keyword, return that token
-		if (tokentype = keyword(Text)) {
-		t->token = tokentype;
-		break;
-		}
-		// Not a recognised keyword, so an error for now
-		printf("Unrecognised symbol %s on line %d\n", Text, Line);
-		exit(1);
+      if (isdigit(c)) {
+        t->intvalue = scanint(c);
+        t->token = T_INTLIT;
+        break;
+      } else if (isalpha(c) || '_' == c) {
+        // Read in a keyword or identifier
+        scanident(c, Text, TEXTLEN);
+        // If it's a recognised keyword, return that token
+        if (tokentype = keyword(Text)) {
+          t->token = tokentype;
+          break;
+        }
+        // Not a recognised keyword, so it must be an identifier
+        t->token = T_IDENT;
+        break;
       }
-      // The character isn't part of any recognised token, error
-      printf("Unrecognised character %c on line %d\n", c, Line);
-      exit(1);
+    // The character isn't part of any recognised token, error
+    fatalc("Unrecognised character", c);
   }
-
   // We found a token
   return (1);
 }

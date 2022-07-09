@@ -4,19 +4,18 @@
 
 // Build and return a generic AST node
 struct ASTnode *mkastnode(int op, struct ASTnode *left, struct ASTnode *right, int intvalue) {
+  
   struct ASTnode *n;
-
   // Malloc a new ASTnode
   n = (struct ASTnode *) malloc(sizeof(struct ASTnode));
-  if (n == NULL) {
-    fprintf(stderr, "Unable to malloc in mkastnode()\n");
-    exit(1);
-  }
+  if (n == NULL)
+    fatal("Unable to malloc in mkastnode()");
+
   // Copy in the field values and return it
   n->op = op;
   n->left = left;
   n->right = right;
-  n->intvalue = intvalue;
+  n->v.intvalue = intvalue;
   return (n);
 }
 
