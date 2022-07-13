@@ -114,30 +114,59 @@ int scan(struct token *t) {
 
   // Determine the token based on
   // the input character
+
   switch (c) {
-    case EOF:
-      t->token = T_EOF;
-      return (0);
-    case '+':
-      t->token = T_PLUS;
-      break;
-    case '-':
-      t->token = T_MINUS;
-      break;
-    case '*':
-      t->token = T_STAR;
-      break;
-    case '/':
-      t->token = T_SLASH;
-      break;
-    case ';':
-      t->token = T_SEMI;
-      break;
-    case '=':
-      t->token = T_EQUALS;
-      break;
-    default:
-      // If it's a digit, scan the
+  case EOF:
+    t->token = T_EOF;
+    return (0);
+  case '+':
+    t->token = T_PLUS;
+    break;
+  case '-':
+    t->token = T_MINUS;
+    break;
+  case '*':
+    t->token = T_STAR;
+    break;
+  case '/':
+    t->token = T_SLASH;
+    break;
+  case ';':
+    t->token = T_SEMI;
+    break;
+  case '=':
+    if ((c = next()) == '=') {
+      t->token = T_EQ;
+    } else {
+      putback(c);
+      t->token = T_ASSIGN;
+    }
+    break;
+  case '!':
+    if ((c = next()) == '=') {
+      t->token = T_NE;
+    } else {
+      fatalc("Unrecognised character", c);
+    }
+    break;
+  case '<':
+    if ((c = next()) == '=') {
+      t->token = T_LE;
+    } else {
+      putback(c);
+      t->token = T_LT;
+    }
+    break;
+  case '>':
+    if ((c = next()) == '=') {
+      t->token = T_GE;
+    } else {
+      putback(c);
+      t->token = T_GT;
+    }
+    break;
+  default:
+	  // If it's a digit, scan the
       // literal integer value in
       if (isdigit(c)) {
         t->intvalue = scanint(c);
